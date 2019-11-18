@@ -1,0 +1,15 @@
+{
+  "name": "auto_station_location",
+  "version": "1.0.0",
+  "description": "Task of automatically calculating site coordinates",
+  "main": "app.js",
+  "dependencies": {
+    "ftp": "^0.3.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zc",
+  "license": "ISC"
+}

@@ -1,0 +1,5 @@
+
+{
+  "rtcmPath":"/mnt/relayServer/storage",
+  "stations":["sf01","sf02","sf03","sf04","sf07","sf09","sf11","sf12","sf13","sf14","sf17","sf18","sf20","stfu","wx02"]
+}
