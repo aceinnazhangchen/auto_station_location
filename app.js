@@ -342,7 +342,7 @@ async function run()
  
     console.log(dataCfg.stations);
 	
-	const outPath = path.join(__dirname,"download",fullyear,'igr_'+doy);
+	const outPath = path.join(rtcmBasePath,"pos",fullyear,'igr_'+doy);
 	mkdirsSync(outPath);
 	
     for(let i in dataCfg.stations)
