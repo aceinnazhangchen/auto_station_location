@@ -338,7 +338,7 @@ async function run()
     //child_process.spawnSync('gzip',['-vd',path.join(downloadPath,clkFileZ)]);
     await endFtp();
 
-    var currentUpdate = {date:date.toLocaleDateString(),stations:[]};
+    var currentUpdate = {date:date.toLocaleDateString(),stations:{}};
  
     console.log(dataCfg.stations);
 	
@@ -351,7 +351,7 @@ async function run()
 		let datetime = fullyear+"/"+month+"/"+day+" 00:00:00";
 		console.log(datetime);
         let outPosStr = runTools(downloadPath,rtcmePath,obsfile,brdcFile,sp3hFileLowCase,clkFileLowCase,datetime,outPath);
-		currentUpdate.stations.push(outPosStr);
+		currentUpdate.stations[dataCfg.stations[i]] = outPosStr;
     }
 
     fs.writeFileSync(path.join(__dirname,"lastUpdate.json"),JSON.stringify(currentUpdate, null, '\t'));
