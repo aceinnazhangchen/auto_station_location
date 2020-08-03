@@ -270,8 +270,12 @@ async function run()
     console.log(gpsWeekNum);
 
     const brdcFile = "BRDC00IGS_R_"+fullyear+doy+"0000_01D_MN.rnx";
+    const brdmFile = "BRDM00DLR_S_"+fullyear+doy+"0000_01D_MN.rnx";
     const brdcFileZ = brdcFile+".gz";
+    const brdmFileZ = brdmFile+".gz";
     const ftpBrdcPath = path.join("/pub/gps/data/daily/",fullyear,doy,year+"p",brdcFileZ); 
+    const ftpBrdmPath = path.join("/pub/gps/data/daily/",fullyear,doy,year+"p",brdmFileZ); 
+    var ephemerisfile = brdcFile;
     
     // const sp3hFile = "GFZ0MGXRAP_"+fullyear+doy+"0000_01D_05M_ORB.SP3";
     // const sp3hFileZ = sp3hFile+".gz";
@@ -304,10 +308,25 @@ async function run()
         let {err : ea} = await get(ftpBrdcPath,downloadPath);
         if(ea){
             console.log(ea);
+            // client.end();
+            // return;
+        }else{
+            await unzip(path.join(downloadPath,brdcFileZ));
+            ephemerisfile = brdcFile;
+        }
+    }
+    //if haven't brdc use brdm
+    if(fs.existsSync(path.join(downloadPath,brdcFile))==false && fs.existsSync(path.join(downloadPath,brdmFile))==false)
+    {
+        let {err : ea} = await get(ftpBrdmPath,downloadPath);
+        if(ea){
+            console.log(ea);
             client.end();
             return;
+        }else{
+            await unzip(path.join(downloadPath,brdmFileZ));
+            ephemerisfile = brdmFile;
         }
-        await unzip(path.join(downloadPath,brdcFileZ));
     }
     //child_process.spawnSync('gzip',['-vd',path.join(downloadPath,brdcFileZ)]);
     //===Sp3 File===
@@ -350,7 +369,7 @@ async function run()
         let obsfile = dataCfg.stations[i]+doy+"0";
 		let datetime = fullyear+"/"+month+"/"+day+" 00:00:00";
 		console.log(datetime);
-        let outPosStr = runTools(downloadPath,rtcmePath,obsfile,brdcFile,sp3hFileLowCase,clkFileLowCase,datetime,outPath);
+        let outPosStr = runTools(downloadPath,rtcmePath,obsfile,ephemerisfile,sp3hFileLowCase,clkFileLowCase,datetime,outPath);
 		currentUpdate.stations[dataCfg.stations[i]] = outPosStr;
     }
 
