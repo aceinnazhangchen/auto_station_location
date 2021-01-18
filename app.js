@@ -11,7 +11,7 @@ const spawnSync = require('child_process').spawnSync;
 const daysec = 86400;
 
 const address = {
-    host : '198.118.242.40',
+    host : 'gdc.cddis.eosdis.nasa.gov',//'198.118.242.40' is old address,
     port : '21',
     user : 'anonymous',
     password : '',
@@ -277,13 +277,6 @@ async function run()
     const ftpBrdmPath = path.join("/pub/gps/data/daily/",fullyear,doy,year+"p",brdmFileZ); 
     var ephemerisfile = brdcFile;
     
-    // const sp3hFile = "GFZ0MGXRAP_"+fullyear+doy+"0000_01D_05M_ORB.SP3";
-    // const sp3hFileZ = sp3hFile+".gz";
-    // const ftpSp3hPath = path.join("/pub/gps/products/mgex/",gpsWeekNum.toString(),sp3hFileZ);
-    // const clkFile = "GFZ0MGXRAP_"+fullyear+doy+"0000_01D_30S_CLK.CLK";
-    // const clkFileZ = clkFile+".gz";
-    // const ftpClkPath = path.join("/pub/gps/products/mgex/",gpsWeekNum.toString(),clkFileZ);
-
     const sp3hFile = "igr"+gpsWeekNum+weekDay+".sp3";
     const sp3hFileZ = sp3hFile+".Z";
     const ftpSp3hPath = path.join("/pub/gps/products/",gpsWeekNum.toString(),sp3hFileZ);
