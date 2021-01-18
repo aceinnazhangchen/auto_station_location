@@ -10,6 +10,7 @@ const spawnSync = require('child_process').spawnSync;
 
 const daysec = 86400;
 
+const ftp_root_host = "ftps://gdc.cddis.eosdis.nasa.gov"
 const address = {
     host : 'gdc.cddis.eosdis.nasa.gov',//'198.118.242.40' is old address,
     port : '21',
@@ -273,17 +274,17 @@ async function run()
     const brdmFile = "BRDM00DLR_S_"+fullyear+doy+"0000_01D_MN.rnx";
     const brdcFileZ = brdcFile+".gz";
     const brdmFileZ = brdmFile+".gz";
-    const ftpBrdcPath = path.join("/pub/gps/data/daily/",fullyear,doy,year+"p",brdcFileZ); 
-    const ftpBrdmPath = path.join("/pub/gps/data/daily/",fullyear,doy,year+"p",brdmFileZ); 
+    const ftpBrdcPath = path.join(ftp_root_host,"/pub/gps/data/daily/",fullyear,doy,year+"p",brdcFileZ); 
+    const ftpBrdmPath = path.join(ftp_root_host,"/pub/gps/data/daily/",fullyear,doy,year+"p",brdmFileZ); 
     var ephemerisfile = brdcFile;
     
     const sp3hFile = "igr"+gpsWeekNum+weekDay+".sp3";
     const sp3hFileZ = sp3hFile+".Z";
-    const ftpSp3hPath = path.join("/pub/gps/products/",gpsWeekNum.toString(),sp3hFileZ);
+    const ftpSp3hPath = path.join(ftp_root_host,"/pub/gps/products/",gpsWeekNum.toString(),sp3hFileZ);
 
     const clkFile = "igr"+gpsWeekNum+weekDay+".clk";
     const clkFileZ = clkFile+".Z";
-    const ftpClkPath = path.join("/pub/gps/products/",gpsWeekNum.toString(),clkFileZ);
+    const ftpClkPath = path.join(ftp_root_host,"/pub/gps/products/",gpsWeekNum.toString(),clkFileZ);
 
     const rtcmBasePath = dataCfg.rtcmPath;
     const rtcmePath = path.join(rtcmBasePath,fullyear,doy);
@@ -293,12 +294,13 @@ async function run()
     sp3hFileLowCase = path.basename(sp3hFile,".SP3")+".sp3";
     clkFileLowCase = path.basename(clkFile,".CLK")+".clk";
 
-    await connectFtp();
+    //await connectFtp();
     // 
     //===Brdc File===
     if(fs.existsSync(path.join(downloadPath,brdcFile))==false)
     {
-        let {err : ea} = await get(ftpBrdcPath,downloadPath);
+		let {stderr : ea} = spawnSync("wget",["-P",downloadPath,ftpBrdcPath]);
+        //let {err : ea} = await get(ftpBrdcPath,downloadPath);
         if(ea){
             console.log(ea);
             // client.end();
@@ -311,7 +313,8 @@ async function run()
     //if haven't brdc use brdm
     if(fs.existsSync(path.join(downloadPath,brdcFile))==false && fs.existsSync(path.join(downloadPath,brdmFile))==false)
     {
-        let {err : ea} = await get(ftpBrdmPath,downloadPath);
+		let {stderr : ea} = spawnSync("wget",["-P",downloadPath,ftpBrdmPath]);
+        //let {err : ea} = await get(ftpBrdmPath,downloadPath);
         if(ea){
             console.log(ea);
             client.end();
@@ -325,7 +328,8 @@ async function run()
     //===Sp3 File===
     if(fs.existsSync(path.join(downloadPath,sp3hFileLowCase))==false)
     {
-        let {err : eb} = await get(ftpSp3hPath,downloadPath);
+		let {stderr : ea} = spawnSync("wget",["-P",downloadPath,ftpSp3hPath]);
+        //let {err : eb} = await get(ftpSp3hPath,downloadPath);
         if(eb){
             console.log(eb);
             client.end();
@@ -338,7 +342,8 @@ async function run()
     //===Clk File===
     if(fs.existsSync(path.join(downloadPath,clkFileLowCase))==false)
     {
-        let {err : ed} = await get(ftpClkPath,downloadPath);
+		let {stderr : ea} = spawnSync("wget",["-P",downloadPath,ftpClkPath]);
+        //let {err : ed} = await get(ftpClkPath,downloadPath);
         if(ed){
             console.log(ed);
             client.end();
@@ -348,7 +353,7 @@ async function run()
         await exec(`mv ${path.join(downloadPath,clkFile)}  ${path.join(downloadPath,clkFileLowCase)}`);
     }
     //child_process.spawnSync('gzip',['-vd',path.join(downloadPath,clkFileZ)]);
-    await endFtp();
+    //await endFtp();
 
     var currentUpdate = {date:date.toLocaleDateString(),stations:{}};
  
